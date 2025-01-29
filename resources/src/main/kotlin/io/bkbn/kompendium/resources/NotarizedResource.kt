@@ -24,10 +24,8 @@ object NotarizedResource {
     on(InstallHook) {
       val route = it as? Route ?: return@on
       val spec = application.attributes[KompendiumAttributes.openApiSpec]
-      val routePath = route.calculateRoutePath()
       val authMethods = route.collectAuthMethods()
-      val resourcePath = T::class.getResourcePathFromClass()
-      val fullPath = "$routePath$resourcePath"
+      val fullPath = T::class.getPathFromClass(application)
 
       addToSpec(spec, fullPath, authMethods)
     }

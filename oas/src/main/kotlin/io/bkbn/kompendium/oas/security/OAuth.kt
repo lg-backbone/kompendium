@@ -1,9 +1,13 @@
 package io.bkbn.kompendium.oas.security
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class OAuth(val description: String? = null, val flows: Flows) : SecuritySchema {
+  @EncodeDefault(EncodeDefault.Mode.ALWAYS)
   val type: String = "oauth2"
 
   @Serializable

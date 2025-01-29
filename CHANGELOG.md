@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+- Fix missing openapi version field
+- Fix json schema field missing
+- Fix broken path calculation of NotarizedResource
+
 ## [4.0.3] - 2024-11-11
 
 ### 🐛 Bug Fixes
