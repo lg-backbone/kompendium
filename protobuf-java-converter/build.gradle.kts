@@ -23,7 +23,7 @@ dependencies {
   val kotlinSerializeVersion: String by project
 
   implementation(projects.kompendiumJsonSchema)
-  implementation("com.google.protobuf:protobuf-java:3.25.6")
+  implementation("com.google.protobuf:protobuf-java:4.29.3")
   implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializeVersion")
 
