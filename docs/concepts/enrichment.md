@@ -1,16 +1,20 @@
-Kompendium allows users to enrich their data types with additional information. This can be done by defining a
-`TypeEnrichment` object and passing it to the `enrichment` parameter of the relevant `requestType` or `responseType`.
+Kompendium allows users to enrich their data types with additional information. This can be done by defining an
+`ObjectEnrichment` object and passing it to the `enrichment` parameter of the relevant `requestType` or `responseType`.
 
 ```kotlin
 data class SimpleData(val a: String, val b: Int? = null)
 
-val myEnrichment = TypeEnrichment<SimpleData>(id = "simple-enrichment") {
+val myEnrichment = ObjectEnrichment<SimpleData>(id = "simple-enrichment") {
   SimpleData::a {
-    description = "This will update the field description"
+    StringEnrichment("a") {
+      description = "This will update the field description"
+    }
   }
   SimpleData::b {
-    // Will indicate in the UI that the field will be removed soon
-    deprecated = true
+    NumberEnrichment("b") {
+      // Will indicate in the UI that the field will be removed soon
+      deprecated = true
+    }
   }
 }
 
@@ -50,28 +54,34 @@ and skip analyzing the new enrichment.
 ### Nested Enrichments
 
 Enrichments are portable and composable, meaning that we can take an enrichment for a child data class
-and apply it inside a parent data class using the `typeEnrichment` property.
+and apply it inside a parent data class.
 
 ```kotlin
 data class ParentData(val a: String, val b: ChildData)
 data class ChildData(val c: String, val d: Int? = null)
 
-val childEnrichment = TypeEnrichment<ChildData>(id = "child-enrichment") {
+val childEnrichment = ObjectEnrichment<ChildData>(id = "child-enrichment") {
+  description = "This will update the field description of field b on parent data"
   ChildData::c {
-    description = "This will update the field description of field c on child data"
+    StringEnrichment("c") {
+      description = "This will update the field description of field c on child data"
+    }
   }
   ChildData::d {
-    description = "This will update the field description of field d on child data"
+    NumberEnrichment("d") {
+      description = "This will update the field description of field d on child data"
+    }
   }
 }
 
-val parentEnrichment = TypeEnrichment<ParentData>(id = "parent-enrichment") {
+val parentEnrichment = ObjectEnrichment<ParentData>(id = "parent-enrichment") {
   ParentData::a {
-    description = "This will update the field description"
+    StringEnrichment("a") {
+      description = "This will update the field description"
+    }
   }
   ParentData::b {
-    description = "This will update the field description of field b on parent data"
-    typeEnrichment = childEnrichment // Will apply the child enrichment to the internals of field b
+    childEnrichment // Will apply the child enrichment to the internals of field b
   }
 }
 ```
@@ -83,7 +93,7 @@ All enrichments support the following properties:
 - description -> Provides a reader friendly description of the field in the object
 - deprecated -> Indicates that the field is deprecated and should not be used
 
-### String
+### Strings (`StringEnrichment`)
 
 - minLength -> The minimum length of the string
 - maxLength -> The maximum length of the string
@@ -91,7 +101,7 @@ All enrichments support the following properties:
 - contentEncoding -> The encoding of the string
 - contentMediaType -> The media type of the string
 
-### Numbers
+### Numbers (`NumberEnrichment`)
 
 - minimum -> The minimum value of the number
 - maximum -> The maximum value of the number
@@ -99,8 +109,20 @@ All enrichments support the following properties:
 - exclusiveMaximum -> Indicates that the maximum value is exclusive
 - multipleOf -> Indicates that the number must be a multiple of the provided value
 
-### Arrays
+### Arrays (`CollectionEnrichment`)
 
 - minItems -> The minimum number of items in the array
 - maxItems -> The maximum number of items in the array
 - uniqueItems -> Indicates that the array must contain unique items
+- itemEnrichment -> An enrichment object for the array items
+
+### Maps (`MapEnrichment`)
+
+- minProperties -> The minimum number of items in the map
+- maxProperties -> The maximum number of items in the map
+- keyEnrichment -> A `StringEnrichment` object for the map keys
+- valueEnrichment -> An enrichment object for the map values
+
+### Booleans (`BooleanEnrichment`)
+
+(No additional properties)
